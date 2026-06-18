@@ -1,0 +1,17 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell -NonInteractive -ExecutionPolicy Bypass -File \"C:\\Users\\Adrian\\Documents\\TossdchickenApp\\.claude\\hooks\\read-handoff.ps1\"",
+            "shell": "powershell",
+            "statusMessage": "Loading project handoff...",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
+}
