@@ -1,12 +1,14 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { Suspense, lazy } from 'react'
 import { AuthProvider } from './context/AuthContext'
+import { CartProvider } from './context/CartContext'
 import { PrivateRoute } from './components/PrivateRoute'
 
 const Login = lazy(() => import('./pages/auth/Login'))
 const Register = lazy(() => import('./pages/auth/Register'))
 const Dashboard = lazy(() => import('./pages/reports/Dashboard'))
 const OrderScreen = lazy(() => import('./pages/pos/OrderScreen'))
+const Receipt = lazy(() => import('./pages/pos/Receipt'))
 
 export default function App() {
   return (
@@ -18,7 +20,7 @@ export default function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
 
-            {/* Owner routes */}
+            {/* Owner-only */}
             <Route
               path="/reports/dashboard"
               element={
@@ -28,12 +30,22 @@ export default function App() {
               }
             />
 
-            {/* Cashier routes */}
+            {/* POS — accessible to owner and cashier */}
             <Route
               path="/pos"
               element={
-                <PrivateRoute role="cashier">
-                  <OrderScreen />
+                <PrivateRoute role={['owner', 'cashier']}>
+                  <CartProvider>
+                    <OrderScreen />
+                  </CartProvider>
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/pos/receipt/:orderId"
+              element={
+                <PrivateRoute role={['owner', 'cashier']}>
+                  <Receipt />
                 </PrivateRoute>
               }
             />
