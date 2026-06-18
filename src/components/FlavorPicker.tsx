@@ -24,7 +24,7 @@ export function FlavorPicker({ item, flavors, onConfirm, onClose }: FlavorPicker
   const itemFlavors = flavors.filter(f => f.menu_item_id === item.id)
   const hasNonOriginal = selectedFlavors.some(f => f.name !== 'Original')
   const unitPrice = item.base_price + selectedFlavors.reduce((sum, f) => sum + f.surcharge, 0)
-  const canAdd = itemFlavors.length === 0 || selectedFlavors.length > 0
+  const isConfirmDisabled = itemFlavors.length > 0 && selectedFlavors.length === 0
 
   function toggleFlavor(flavor: Flavor) {
     const alreadySelected = selectedFlavors.find(f => f.id === flavor.id)
@@ -121,7 +121,7 @@ export function FlavorPicker({ item, flavors, onConfirm, onClose }: FlavorPicker
 
         <button
           onClick={() => onConfirm({ selectedFlavors, quantity: qty, isDrizzled })}
-          disabled={!canAdd}
+          disabled={isConfirmDisabled}
           className="w-full bg-brand-primary text-white py-3 rounded-btn font-bold disabled:opacity-40"
         >
           Add to Order · ₱{(unitPrice * qty).toFixed(2)}
