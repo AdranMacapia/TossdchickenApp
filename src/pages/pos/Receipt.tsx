@@ -45,6 +45,10 @@ export default function Receipt() {
         setOrder(data as OrderData | null)
         setLoading(false)
       })
+      .catch((error) => {
+        console.error('Failed to fetch receipt:', error)
+        setLoading(false)
+      })
   }, [orderId])
 
   if (loading) {
