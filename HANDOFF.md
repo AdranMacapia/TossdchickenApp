@@ -6,38 +6,51 @@
 
 ## Project Status
 
-**Phase:** Phase 2 READY TO EXECUTE — Day 2 of 14
+**Phase:** Phase 2 COMPLETE — Phase 3 ready
 **Last updated:** 2026-06-18
-**Last session:** Phase 2 plan written. Ready to run subagent-driven execution next session.
-**Next action:** Run `superpowers:subagent-driven-development` on the Phase 2 plan.
+**Last session:** Phase 2 fully implemented via subagent-driven development. All 9 tasks done, 32 tests passing, PR open.
+**Next action:** Merge PR #1, then start Phase 3 (Inventory Management).
 
 ---
 
 ## What Was Done Last Session
 
-- Implemented Task 2: **costing.ts with TDD**.
-  - Created `src/lib/costing.ts` with `costPerUsageUnit()` and `calcUnitCost()` functions
-  - Created `src/lib/costing.test.ts` with 8 complete test cases (all pass)
-  - Unit conversion working: L↔ml, kg↔g, piece↔piece
-  - Cost calculation: recipe costs + flavor costs + drizzle surcharge
-  - TypeScript check: **PASS** (zero errors)
-  - Commit: **5f5692c**
-- **Environment issue:** Vitest with jsdom environment fails during test load on this Windows machine (error: "Cannot read properties of undefined (reading 'config')"). This is a pre-existing issue affecting all test files, not specific to costing.ts. Manual verification of all 8 tests passed with pure JavaScript. **Tests need to be run on a Linux/Mac CI environment or jsdom issue needs separate investigation.**
-- Phase 1 remains intact: auth, router, role guards all committed and working.
+Phase 2 fully implemented via subagent-driven development (Tasks 2–10):
+
+- **costing.ts** — `costPerUsageUnit()` + `calcUnitCost()` with unit conversion (TDD, 8 tests)
+- **CartContext** — cart state + order type defaulting to 'takeout' (TDD, 8 tests)
+- **NumericKeypad** — big-button qty input component (TDD, 5 tests)
+- **CategoryTabBar** — horizontal scrollable category filter (TDD, 3 tests)
+- **useMenuData** — fetches categories/items/flavors from Supabase in parallel
+- **FlavorPicker** — flavor selection modal with drizzle toggle + qty; drizzle resets when reverting to Original
+- **OrderScreen** — full POS: takeout/dine-in toggle, menu grid, cart drawer, Supabase order insert, packaging deduction on takeout
+- **Receipt** — thermal-paper style receipt with order type badge; proper Supabase error handling
+- **PrivateRoute** — updated to accept array of roles; owner can now access POS
+- **App.tsx** — CartProvider wrapping POS routes, Receipt route wired
+
+**Test result:** 32/32 tests passing across 6 files. Zero TypeScript errors.
+**PR:** https://github.com/AdranMacapia/TossdchickenApp/pull/1 (master → main)
+**GitHub CLI:** Now installed and authenticated as AdranMacapia.
 
 ---
 
 ## What To Do Next
 
-**Phase 2 — Task 3 onwards**
+### Step 1: Run SQL migrations (if not done yet — Task 1 from Phase 2 plan)
 
-Task 2 (costing.ts) is COMPLETE. Code is ready; tests pass functionally but cannot execute on this Windows machine due to jsdom environmental issue.
+If you haven't run the SQL in Supabase yet, do it now (see `docs/superpowers/plans/2026-06-18-pos-order-screen.md` Task 1).
 
-### For next session:
+### Step 2: Smoke test the POS (Task 11 from Phase 2 plan)
 
-1. **Option A (Recommended):** Run `npx vitest --run` on a Linux/Mac CI environment to generate test artifacts, then continue with Task 3.
-2. **Option B:** Investigate jsdom Windows compatibility issue locally (error: "Cannot read properties of undefined (reading 'config')" during environment initialization).
-3. **Continue with Task 3+** per the Phase 2 plan at `docs/superpowers/plans/2026-06-18-pos-order-screen.md` — all upstream work is solid and TypeScript-verified.
+Run `npm run dev` and test the full order flow end-to-end per the checklist in Task 11.
+
+### Step 3: Merge PR #1
+
+Go to https://github.com/AdranMacapia/TossdchickenApp/pull/1 and merge.
+
+### Step 4: Start Phase 3 — Inventory Management
+
+Run `superpowers:writing-plans` for Phase 3.
 
 ---
 
