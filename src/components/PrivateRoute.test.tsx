@@ -67,4 +67,12 @@ describe('PrivateRoute', () => {
     )
     expect(screen.getByText('Protected Content')).toBeInTheDocument()
   })
+
+  it('redirects owner trying to access cashier route to /reports/dashboard', () => {
+    renderWithRouter(
+      makeAuth({ role: 'owner', session: { user: {} } as any }),
+      'cashier'
+    )
+    expect(screen.getByText('Dashboard Page')).toBeInTheDocument()
+  })
 })
