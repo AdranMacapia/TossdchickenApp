@@ -66,35 +66,47 @@ export default function OrderScreen() {
   }
 
   async function deductPackaging(orderId: string) {
-    const { data: pkgItems } = await supabase
+    const { data: pkgItems, error: pkgError } = await supabase
       .from('packaging_items')
       .select('ingredient_id, qty_per_order')
 
+    if (pkgError) throw pkgError
     if (!pkgItems?.length) return
 
-    for (const pkg of pkgItems) {
-      if (!pkg.ingredient_id) continue
+    const validPkgItems = pkgItems.filter(p => p.ingredient_id != null) as Array<{
+      ingredient_id: string
+      qty_per_order: number
+    }>
+    if (!validPkgItems.length) return
 
-      const { data: ing } = await supabase
-        .from('ingredients')
-        .select('current_stock')
-        .eq('id', pkg.ingredient_id)
-        .single()
+    const ingredientIds = validPkgItems.map(p => p.ingredient_id)
+    const { data: ings, error: ingsError } = await supabase
+      .from('ingredients')
+      .select('id, current_stock')
+      .in('id', ingredientIds)
 
-      const newStock = Math.max(0, (ing?.current_stock ?? 0) - pkg.qty_per_order)
+    if (ingsError) throw ingsError
 
-      await supabase
+    const stockMap = new Map((ings ?? []).map(i => [i.id, i.current_stock as number]))
+
+    for (const pkg of validPkgItems) {
+      const currentStock = stockMap.get(pkg.ingredient_id) ?? 0
+      const newStock = Math.max(0, currentStock - pkg.qty_per_order)
+      const { error: updateError } = await supabase
         .from('ingredients')
         .update({ current_stock: newStock })
         .eq('id', pkg.ingredient_id)
-
-      await supabase.from('inventory_log').insert({
-        ingredient_id: pkg.ingredient_id,
-        change_qty: -pkg.qty_per_order,
-        reason: 'packaging_takeout',
-        reference_id: orderId,
-      })
+      if (updateError) throw updateError
     }
+
+    const logRows = validPkgItems.map(pkg => ({
+      ingredient_id: pkg.ingredient_id,
+      change_qty: -pkg.qty_per_order,
+      reason: 'packaging_takeout',
+      reference_id: orderId,
+    }))
+    const { error: logError } = await supabase.from('inventory_log').insert(logRows)
+    if (logError) throw logError
   }
 
   async function handleCompleteOrder() {
