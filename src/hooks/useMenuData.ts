@@ -37,9 +37,12 @@ export function useMenuData() {
         supabase.from('menu_items').select('*').eq('is_available', true),
         supabase.from('flavors').select('*'),
       ])
-      if (catsResult.data) setCategories(catsResult.data)
-      if (itemsResult.data) setItems(itemsResult.data)
-      if (flavorsResult.data) setFlavors(flavorsResult.data)
+      if (catsResult.error) console.error('Failed to load categories:', catsResult.error)
+      else if (catsResult.data) setCategories(catsResult.data)
+      if (itemsResult.error) console.error('Failed to load menu items:', itemsResult.error)
+      else if (itemsResult.data) setItems(itemsResult.data)
+      if (flavorsResult.error) console.error('Failed to load flavors:', flavorsResult.error)
+      else if (flavorsResult.data) setFlavors(flavorsResult.data)
       setLoading(false)
     }
     load()
