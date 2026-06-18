@@ -6,8 +6,9 @@ export default {
     extend: {
       colors: {
         brand: {
-          primary: '#E8610A',
-          bg: '#FFF8F2',
+          primary: '#FFCC00',
+          accent: '#FF2D55',
+          bg: '#FFFFFF',
           text: '#1A1A1A',
         },
       },
