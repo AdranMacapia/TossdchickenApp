@@ -28,16 +28,20 @@ export function FlavorPicker({ item, flavors, onConfirm, onClose }: FlavorPicker
 
   function toggleFlavor(flavor: Flavor) {
     const alreadySelected = selectedFlavors.find(f => f.id === flavor.id)
+    let nextFlavors: SelectedFlavor[]
     if (alreadySelected) {
-      setSelectedFlavors(prev => prev.filter(f => f.id !== flavor.id))
-      return
-    }
-    const next: SelectedFlavor = { id: flavor.id, name: flavor.name, surcharge: flavor.price_surcharge }
-    if (selectedFlavors.length >= item.max_flavors) {
-      // At max — drop oldest, add new (single-flavor items just replace)
-      setSelectedFlavors(prev => [...prev.slice(1), next])
+      nextFlavors = selectedFlavors.filter(f => f.id !== flavor.id)
     } else {
-      setSelectedFlavors(prev => [...prev, next])
+      const next: SelectedFlavor = { id: flavor.id, name: flavor.name, surcharge: flavor.price_surcharge }
+      if (selectedFlavors.length >= item.max_flavors) {
+        nextFlavors = [...selectedFlavors.slice(1), next]
+      } else {
+        nextFlavors = [...selectedFlavors, next]
+      }
+    }
+    setSelectedFlavors(nextFlavors)
+    if (!nextFlavors.some(f => f.name !== 'Original')) {
+      setIsDrizzled(true)
     }
   }
 

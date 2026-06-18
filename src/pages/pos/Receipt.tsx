@@ -41,12 +41,9 @@ export default function Receipt() {
       `)
       .eq('id', orderId)
       .single()
-      .then(({ data }) => {
-        setOrder(data as OrderData | null)
-        setLoading(false)
-      })
-      .catch((error) => {
-        console.error('Failed to fetch receipt:', error)
+      .then(({ data, error }) => {
+        if (error) console.error('Failed to fetch receipt:', error)
+        setOrder(error ? null : data as OrderData | null)
         setLoading(false)
       })
   }, [orderId])
