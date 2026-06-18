@@ -66,13 +66,13 @@ export default function MenuItems() {
   }
 
   async function toggleAvailability(item: MenuItem) {
+    setItems(prev =>
+      prev.map(i => i.id === item.id ? { ...i, is_available: !i.is_available } : i)
+    )
     await supabase
       .from('menu_items')
       .update({ is_available: !item.is_available })
       .eq('id', item.id)
-    setItems(prev =>
-      prev.map(i => i.id === item.id ? { ...i, is_available: !i.is_available } : i)
-    )
   }
 
   async function handleSave() {
