@@ -93,4 +93,37 @@ describe('Categories', () => {
       expect(screen.getByText(/no categories yet/i)).toBeInTheDocument()
     )
   })
+
+  it('shows error when deleting a category that has menu items', async () => {
+    // Override menu_items mock to return an existing item
+    vi.mocked(supabase.from).mockImplementation((table: string) => {
+      if (table === 'categories') {
+        return {
+          select: vi.fn().mockReturnValue({
+            order: vi.fn().mockResolvedValue({ data: mockCats, error: null }),
+          }),
+          delete: vi.fn().mockReturnValue({
+            eq: vi.fn().mockResolvedValue({ error: null }),
+          }),
+        } as any
+      }
+      if (table === 'menu_items') {
+        return {
+          select: vi.fn().mockReturnValue({
+            eq: vi.fn().mockReturnValue({
+              limit: vi.fn().mockResolvedValue({ data: [{ id: 'item-1' }], error: null }),
+            }),
+          }),
+        } as any
+      }
+      return {} as any
+    })
+
+    renderCategories()
+    await waitFor(() => screen.getByText('Poppers'))
+    await userEvent.click(screen.getAllByText('Delete')[0])
+    await waitFor(() =>
+      expect(screen.getByText(/remove its menu items first/i)).toBeInTheDocument()
+    )
+  })
 })

@@ -29,7 +29,11 @@ export default function Categories() {
   async function load() {
     setLoading(true)
     const { data, error } = await supabase.from('categories').select('*').order('sort_order')
-    if (!error) setCategories(data ?? [])
+    if (error) {
+      setError('Failed to load categories')
+    } else {
+      setCategories(data ?? [])
+    }
     setLoading(false)
   }
 
