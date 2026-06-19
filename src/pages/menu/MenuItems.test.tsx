@@ -92,4 +92,10 @@ describe('MenuItems', () => {
     await userEvent.click(toggle)
     expect(toggle).toHaveAccessibleName('Unavailable')
   })
+
+  it('shows a Recipe button for each item', async () => {
+    renderMenuItems()
+    await waitFor(() => screen.getByText('Solo'))
+    expect(screen.getAllByText('Recipe')).toHaveLength(2)
+  })
 })

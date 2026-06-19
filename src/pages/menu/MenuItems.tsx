@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
 import { OwnerNav } from '../../components/OwnerNav'
 import { CategoryTabBar } from '../../components/CategoryTabBar'
 import { PriceTag } from '../../components/PriceTag'
+import { useAnimatedNavigate } from '../../hooks/useAnimatedNavigate'
 import type { Category, MenuItem } from '../../hooks/useMenuData'
 
 interface FormState {
@@ -14,7 +14,7 @@ interface FormState {
 }
 
 export default function MenuItems() {
-  const navigate = useNavigate()
+  const navigate = useAnimatedNavigate()
   const [categories, setCategories] = useState<Category[]>([])
   const [items, setItems] = useState<MenuItem[]>([])
   const [loading, setLoading] = useState(true)
@@ -123,7 +123,7 @@ export default function MenuItems() {
   }
 
   return (
-    <div className="min-h-screen bg-brand-bg flex flex-col">
+    <div className="min-h-screen bg-white flex flex-col">
       <OwnerNav title="Menu Items" backTo="/menu/categories" />
       <CategoryTabBar
         categories={categories}
@@ -131,27 +131,37 @@ export default function MenuItems() {
         onSelect={setSelectedCategoryId}
       />
 
-      <div className="px-4 py-4 flex-1">
-        <div className="flex justify-end mb-4">
+      <div className="px-4 py-5 flex-1">
+        <div className="flex justify-end mb-5">
           <button
             onClick={openAdd}
-            className="bg-brand-primary text-brand-text px-4 py-2 rounded-btn text-sm font-bold"
+            className="bg-brand-primary text-brand-text px-4 py-2 rounded-btn text-sm font-bold transition-transform active:scale-[0.98]"
           >
             + Add Item
           </button>
         </div>
 
-        {error && <p className="text-red-500 text-sm mb-3">{error}</p>}
+        {error && (
+          <p className="text-sm text-brand-accent mb-4 px-1">{error}</p>
+        )}
 
         {loading ? (
-          <p className="text-gray-400 text-sm">Loading…</p>
+          <div className="flex items-center justify-center py-16">
+            <div className="w-5 h-5 rounded-full border-2 border-brand-primary border-t-transparent animate-spin" />
+          </div>
         ) : filteredItems.length === 0 ? (
-          <p className="text-gray-400 text-sm text-center mt-8">No items yet.</p>
+          <div className="text-center py-16">
+            <p className="text-gray-400 text-sm">No items yet.</p>
+          </div>
         ) : (
           <ul className="space-y-2">
-            {filteredItems.map(item => (
-              <li key={item.id} className="bg-white rounded-card p-4 shadow-sm">
-                <div className="flex items-start justify-between gap-2">
+            {filteredItems.map((item, i) => (
+              <li
+                key={item.id}
+                className="bg-white border border-[#EAEAEA] rounded-[8px] p-4 list-item-animate"
+                style={{ animationDelay: `${i * 50}ms` }}
+              >
+                <div className="flex items-start justify-between gap-3">
                   <div className="flex-1 min-w-0">
                     <p className="font-semibold text-brand-text leading-snug">{item.name}</p>
                     <div className="flex items-center gap-2 mt-1 flex-wrap">
@@ -161,36 +171,45 @@ export default function MenuItems() {
                       )}
                     </div>
                   </div>
+
+                  {/* Availability toggle */}
                   <button
                     onClick={() => toggleAvailability(item)}
                     aria-label={item.is_available ? 'Available' : 'Unavailable'}
-                    className={`shrink-0 w-10 h-5 rounded-full relative transition-colors ${
-                      item.is_available ? 'bg-brand-primary' : 'bg-gray-300'
+                    className={`shrink-0 w-10 h-[22px] rounded-full relative transition-colors ${
+                      item.is_available ? 'bg-brand-primary' : 'bg-gray-200'
                     }`}
                   >
                     <span
-                      className={`absolute top-0.5 w-4 h-4 bg-white rounded-full transition-transform ${
-                        item.is_available ? 'translate-x-5' : 'translate-x-0.5'
+                      className={`absolute top-[3px] w-4 h-4 bg-white rounded-full shadow-sm transition-transform ${
+                        item.is_available ? 'translate-x-[22px]' : 'translate-x-[3px]'
                       }`}
                     />
                   </button>
                 </div>
+
                 <div className="flex gap-2 mt-3">
                   <button
                     onClick={() => navigate(`/menu/items/${item.id}/flavors`)}
-                    className="text-xs text-gray-500 border border-gray-200 px-2 py-1 rounded"
+                    className="text-xs text-gray-500 border border-[#EAEAEA] px-2.5 py-1 rounded-[6px] hover:border-gray-300 transition-colors"
                   >
                     Flavors
                   </button>
                   <button
+                    onClick={() => navigate(`/inventory/recipes/${item.id}`)}
+                    className="text-xs text-gray-500 border border-[#EAEAEA] px-2.5 py-1 rounded-[6px] hover:border-gray-300 transition-colors"
+                  >
+                    Recipe
+                  </button>
+                  <button
                     onClick={() => openEdit(item)}
-                    className="text-xs text-gray-500 border border-gray-200 px-2 py-1 rounded"
+                    className="text-xs text-gray-500 border border-[#EAEAEA] px-2.5 py-1 rounded-[6px] hover:border-gray-300 transition-colors"
                   >
                     Edit
                   </button>
                   <button
                     onClick={() => handleDelete(item)}
-                    className="text-xs text-brand-accent border border-brand-accent/30 px-2 py-1 rounded"
+                    className="text-xs text-brand-accent border border-brand-accent/30 px-2.5 py-1 rounded-[6px] hover:bg-brand-accent/5 transition-colors"
                   >
                     Delete
                   </button>
@@ -203,74 +222,80 @@ export default function MenuItems() {
 
       {showForm && (
         <div
-          className="fixed inset-0 bg-black/50 flex items-end sm:items-center justify-center z-50"
+          className="fixed inset-0 bg-black/40 flex items-end sm:items-center justify-center z-50"
           onClick={() => setShowForm(false)}
         >
           <div
-            className="bg-white w-full sm:max-w-sm rounded-t-2xl sm:rounded-2xl p-6"
+            className="bg-white w-full sm:max-w-sm rounded-t-[12px] sm:rounded-[12px] p-6 modal-enter"
             onClick={e => e.stopPropagation()}
           >
-            <h2 className="font-bold text-brand-text mb-4">
+            <h2 className="font-bold text-brand-text mb-5">
               {editTarget ? 'Edit Item' : 'New Item'}
             </h2>
+
             <label className="block mb-3">
               <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Name</span>
               <input
                 type="text"
                 value={form.name}
                 onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
-                className="mt-1 w-full border border-gray-200 rounded-card px-3 py-2 text-sm focus:outline-none focus:border-brand-primary"
+                className="mt-1.5 w-full border border-[#EAEAEA] rounded-[6px] px-3 py-2.5 text-sm focus:outline-none focus:border-brand-primary transition-colors"
                 placeholder="e.g. Solo"
                 autoFocus
               />
             </label>
+
             <label className="block mb-3">
               <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Category</span>
               <select
                 value={form.category_id}
                 onChange={e => setForm(f => ({ ...f, category_id: e.target.value }))}
-                className="mt-1 w-full border border-gray-200 rounded-card px-3 py-2 text-sm"
+                className="mt-1.5 w-full border border-[#EAEAEA] rounded-[6px] px-3 py-2.5 text-sm focus:outline-none focus:border-brand-primary transition-colors"
               >
                 {categories.map(c => (
                   <option key={c.id} value={c.id}>{c.name}</option>
                 ))}
               </select>
             </label>
+
             <label className="block mb-3">
               <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Base Price (₱)</span>
               <input
                 type="number"
                 value={form.base_price}
                 onChange={e => setForm(f => ({ ...f, base_price: e.target.value }))}
-                className="mt-1 w-full border border-gray-200 rounded-card px-3 py-2 text-sm focus:outline-none focus:border-brand-primary"
+                className="mt-1.5 w-full border border-[#EAEAEA] rounded-[6px] px-3 py-2.5 text-sm focus:outline-none focus:border-brand-primary transition-colors"
                 placeholder="89.00"
                 min={0}
                 step={0.01}
               />
             </label>
-            <label className="block mb-4">
+
+            <label className="block mb-5">
               <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Max Flavors</span>
               <input
                 type="number"
                 value={form.max_flavors}
                 onChange={e => setForm(f => ({ ...f, max_flavors: e.target.value }))}
-                className="mt-1 w-full border border-gray-200 rounded-card px-3 py-2 text-sm focus:outline-none focus:border-brand-primary"
+                className="mt-1.5 w-full border border-[#EAEAEA] rounded-[6px] px-3 py-2.5 text-sm focus:outline-none focus:border-brand-primary transition-colors"
                 min={1}
                 max={10}
               />
             </label>
-            {error && <p className="text-red-500 text-sm mb-3">{error}</p>}
+
+            {error && <p className="text-sm text-brand-accent mb-4">{error}</p>}
+
             <div className="flex gap-3">
               <button
                 onClick={() => setShowForm(false)}
-                className="flex-1 border border-gray-200 text-gray-500 py-2 rounded-btn text-sm font-semibold"
+                className="flex-1 border border-[#EAEAEA] text-gray-500 py-2.5 rounded-btn text-sm font-semibold hover:border-gray-300 transition-colors"
               >
                 Cancel
               </button>
               <button
                 onClick={handleSave}
                 disabled={saving || !form.name.trim()}
-                className="flex-1 bg-brand-primary text-brand-text py-2 rounded-btn text-sm font-bold disabled:opacity-50"
+                className="flex-1 bg-brand-primary text-brand-text py-2.5 rounded-btn text-sm font-bold transition-transform active:scale-[0.98] disabled:opacity-50"
               >
                 {saving ? 'Saving…' : 'Save'}
               </button>
