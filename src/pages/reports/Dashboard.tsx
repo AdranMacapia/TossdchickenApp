@@ -4,13 +4,14 @@ interface NavCard {
   label: string
   description: string
   to: string
+  disabled?: boolean
 }
 
 const NAV_CARDS: NavCard[] = [
   { label: 'Menu', description: 'Categories, items, and flavors', to: '/menu/categories' },
   { label: 'Ingredients', description: 'Purchase prices and units', to: '/inventory/ingredients' },
   { label: 'Costing Sheet', description: 'Cost, price, and margin per item', to: '/costing' },
-  { label: 'Inventory Log', description: 'Stock movement history', to: '/inventory/log' },
+  { label: 'Inventory Log', description: 'Stock movement history — coming soon', to: '/inventory/log', disabled: true },
 ]
 
 export default function Dashboard() {
@@ -27,8 +28,8 @@ export default function Dashboard() {
           {NAV_CARDS.map(card => (
             <li key={card.to}>
               <button
-                onClick={() => navigate(card.to)}
-                className="w-full text-left bg-white border border-[#EAEAEA] rounded-[8px] p-4 flex items-center justify-between hover:border-gray-300 transition-colors active:scale-[0.99]"
+                onClick={() => { if (!card.disabled) navigate(card.to) }}
+                className={`w-full text-left bg-white border border-[#EAEAEA] rounded-[8px] p-4 flex items-center justify-between transition-colors${card.disabled ? ' opacity-50 cursor-not-allowed' : ' hover:border-gray-300 active:scale-[0.99]'}`}
               >
                 <div>
                   <p className="font-semibold text-brand-text">{card.label}</p>
