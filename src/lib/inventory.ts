@@ -55,7 +55,8 @@ export async function deductRecipeIngredients(
   const stockMap = new Map((ings ?? []).map(i => [i.id, i.current_stock as number]))
 
   for (const [ingredientId, deductQty] of deductions) {
-    const currentStock = stockMap.get(ingredientId) ?? 0
+    if (!stockMap.has(ingredientId)) continue
+    const currentStock = stockMap.get(ingredientId)!
     const newStock = Math.max(0, currentStock - deductQty)
     const { error: updateError } = await supabase
       .from('ingredients')
