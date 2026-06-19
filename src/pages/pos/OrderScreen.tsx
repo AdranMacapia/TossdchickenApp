@@ -90,7 +90,8 @@ export default function OrderScreen() {
     const stockMap = new Map((ings ?? []).map(i => [i.id, i.current_stock as number]))
 
     for (const pkg of validPkgItems) {
-      const currentStock = stockMap.get(pkg.ingredient_id) ?? 0
+      if (!stockMap.has(pkg.ingredient_id)) continue
+      const currentStock = stockMap.get(pkg.ingredient_id)!
       const newStock = Math.max(0, currentStock - pkg.qty_per_order)
       const { error: updateError } = await supabase
         .from('ingredients')
@@ -232,7 +233,7 @@ export default function OrderScreen() {
               >
                 <p className="text-sm font-semibold text-brand-text leading-snug">{item.name}</p>
                 <p className="text-brand-primary font-black text-base mt-1.5">
-                  ₱{item.base_price.toFixed(0)}
+                  ₱{item.base_price.toFixed(2)}
                 </p>
               </button>
             ))}
