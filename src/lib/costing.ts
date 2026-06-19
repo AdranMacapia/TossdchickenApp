@@ -59,6 +59,7 @@ export function calcUnitCost(
 export const DEFAULT_MARGIN_TARGET = 0.65
 
 export function suggestedPrice(cost: number, marginTarget: number): number {
+  if (marginTarget >= 1) throw new RangeError('marginTarget must be less than 1')
   return cost / (1 - marginTarget)
 }
 

@@ -72,6 +72,10 @@ describe('suggestedPrice', () => {
   it('at 0% margin returns cost itself', () => {
     expect(suggestedPrice(50, 0)).toBeCloseTo(50)
   })
+  it('throws when marginTarget is 1 or greater', () => {
+    expect(() => suggestedPrice(35, 1)).toThrow(RangeError)
+    expect(() => suggestedPrice(35, 1.5)).toThrow(RangeError)
+  })
 })
 
 describe('isUnderMargin', () => {
