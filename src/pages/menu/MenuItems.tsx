@@ -38,7 +38,11 @@ export default function MenuItems() {
     } else {
       setCategories(catsResult.data ?? [])
     }
-    if (!itemsResult.error) setItems(itemsResult.data ?? [])
+    if (itemsResult.error) {
+      setError('Failed to load data')
+    } else {
+      setItems(itemsResult.data ?? [])
+    }
     setLoading(false)
   }
 
@@ -69,10 +73,16 @@ export default function MenuItems() {
     setItems(prev =>
       prev.map(i => i.id === item.id ? { ...i, is_available: !i.is_available } : i)
     )
-    await supabase
+    const { error } = await supabase
       .from('menu_items')
       .update({ is_available: !item.is_available })
       .eq('id', item.id)
+    if (error) {
+      setItems(prev =>
+        prev.map(i => i.id === item.id ? { ...i, is_available: item.is_available } : i)
+      )
+      setError('Failed to update availability')
+    }
   }
 
   async function handleSave() {
@@ -102,6 +112,11 @@ export default function MenuItems() {
   }
 
   async function handleDelete(item: MenuItem) {
+    const { data } = await supabase.from('flavors').select('id').eq('menu_item_id', item.id).limit(1)
+    if (data && data.length > 0) {
+      setError(`Cannot delete "${item.name}" — remove its flavors first.`)
+      return
+    }
     const { error } = await supabase.from('menu_items').delete().eq('id', item.id)
     if (error) setError('Failed to delete')
     else setItems(prev => prev.filter(i => i.id !== item.id))

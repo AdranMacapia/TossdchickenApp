@@ -84,11 +84,12 @@ describe('MenuItems', () => {
     expect(screen.getByDisplayValue('89')).toBeInTheDocument()
   })
 
-  it('calls supabase update when availability toggle clicked', async () => {
+  it('optimistically flips availability label when toggle clicked', async () => {
     renderMenuItems()
     await waitFor(() => screen.getByText('Solo'))
-    const toggles = screen.getAllByRole('button', { name: /available|unavailable/i })
-    await userEvent.click(toggles[0])
-    expect(vi.mocked(supabase.from)).toHaveBeenCalledWith('menu_items')
+    const toggle = screen.getAllByRole('button', { name: /available|unavailable/i })[0]
+    expect(toggle).toHaveAccessibleName('Available')
+    await userEvent.click(toggle)
+    expect(toggle).toHaveAccessibleName('Unavailable')
   })
 })
