@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { costPerUsageUnit, calcUnitCost } from './costing'
+import { costPerUsageUnit, calcUnitCost, suggestedPrice, isUnderMargin } from './costing'
 
 /**
  * @vitest environment node
@@ -61,5 +61,30 @@ describe('calcUnitCost', () => {
     }]
     // ₱12 (100ml oil) + ₱3.50 (flavor) + ₱1 (not drizzled) = ₱16.50
     expect(calcUnitCost(recipes, ingredients, 3.5, false)).toBeCloseTo(16.5)
+  })
+})
+
+describe('suggestedPrice', () => {
+  it('returns cost / (1 - marginTarget)', () => {
+    // 35 / (1 - 0.65) = 35 / 0.35 = 100
+    expect(suggestedPrice(35, 0.65)).toBeCloseTo(100)
+  })
+  it('at 0% margin returns cost itself', () => {
+    expect(suggestedPrice(50, 0)).toBeCloseTo(50)
+  })
+})
+
+describe('isUnderMargin', () => {
+  it('returns false when price equals suggested price', () => {
+    expect(isUnderMargin(100, 35, 0.65)).toBe(false)
+  })
+  it('returns false when price exceeds suggested price', () => {
+    expect(isUnderMargin(110, 35, 0.65)).toBe(false)
+  })
+  it('returns true when price is below suggested price', () => {
+    expect(isUnderMargin(80, 35, 0.65)).toBe(true)
+  })
+  it('returns false when cost is 0 (no recipe yet)', () => {
+    expect(isUnderMargin(89, 0, 0.65)).toBe(false)
   })
 })

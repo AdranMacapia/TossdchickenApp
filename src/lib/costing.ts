@@ -55,3 +55,13 @@ export function calcUnitCost(
 
   return recipeCost + flavorCost + drizzleCost
 }
+
+export const DEFAULT_MARGIN_TARGET = 0.65
+
+export function suggestedPrice(cost: number, marginTarget: number): number {
+  return cost / (1 - marginTarget)
+}
+
+export function isUnderMargin(price: number, cost: number, marginTarget: number): boolean {
+  return price < suggestedPrice(cost, marginTarget)
+}
