@@ -65,12 +65,14 @@ export async function deductRecipeIngredients(
     if (updateError) throw updateError
   }
 
-  const logRows = [...deductions.entries()].map(([ingredientId, deductQty]) => ({
-    ingredient_id: ingredientId,
-    change_qty: -deductQty,
-    reason: 'order',
-    reference_id: orderId,
-  }))
+  const logRows = [...deductions.entries()]
+    .filter(([ingredientId]) => stockMap.has(ingredientId))
+    .map(([ingredientId, deductQty]) => ({
+      ingredient_id: ingredientId,
+      change_qty: -deductQty,
+      reason: 'order',
+      reference_id: orderId,
+    }))
 
   const { error: logError } = await supabase.from('inventory_log').insert(logRows)
   if (logError) throw logError
