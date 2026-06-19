@@ -147,7 +147,7 @@ export default function Ingredients() {
                   <p className="font-semibold text-brand-text">{ing.name}</p>
                   <p className="text-xs text-gray-400 mt-0.5">
                     ₱{ing.purchase_price.toFixed(2)} / {ing.purchase_qty}{ing.purchase_unit}
-                    {' · '}₱{costPerUsageUnit(ing).toFixed(4)}/{ing.usage_unit}
+                    {' · '}{(() => { try { return `₱${costPerUsageUnit(ing).toFixed(4)}` } catch { return 'N/A' } })()}/{ing.usage_unit}
                   </p>
                 </div>
                 <div className="flex gap-2">
