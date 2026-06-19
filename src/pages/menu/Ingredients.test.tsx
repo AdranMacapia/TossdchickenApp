@@ -84,4 +84,60 @@ describe('Ingredients', () => {
     await userEvent.click(screen.getAllByText('Delete')[0])
     await waitFor(() => expect(screen.queryByText('Cooking Oil')).not.toBeInTheDocument())
   })
+
+  it('shows Low Stock badge when current_stock is at or below threshold', async () => {
+    vi.mocked(supabase.from).mockImplementation((table: string) => {
+      if (table === 'ingredients') {
+        return {
+          select: vi.fn().mockReturnValue({
+            order: vi.fn().mockResolvedValue({
+              data: [
+                { ...mockIngredients[0], current_stock: 400, low_stock_threshold: 500 },
+                { ...mockIngredients[1], current_stock: 10000, low_stock_threshold: 500 },
+              ],
+              error: null,
+            }),
+          }),
+          insert: vi.fn().mockResolvedValue({ error: null }),
+          update: vi.fn().mockReturnValue({ eq: vi.fn().mockResolvedValue({ error: null }) }),
+          delete: vi.fn().mockReturnValue({ eq: vi.fn().mockResolvedValue({ error: null }) }),
+        } as any
+      }
+      return {} as any
+    })
+    renderIngredients()
+    await waitFor(() => screen.getByText('Cooking Oil'))
+    expect(screen.getByText('Low Stock')).toBeInTheDocument()
+    expect(screen.getAllByText('Low Stock')).toHaveLength(1)
+  })
+
+  it('does not show Low Stock badge when stock is above threshold', async () => {
+    renderIngredients()
+    await waitFor(() => screen.getByText('Cooking Oil'))
+    expect(screen.queryByText('Low Stock')).not.toBeInTheDocument()
+  })
+
+  it('does not show Low Stock badge when threshold is zero', async () => {
+    vi.mocked(supabase.from).mockImplementation((table: string) => {
+      if (table === 'ingredients') {
+        return {
+          select: vi.fn().mockReturnValue({
+            order: vi.fn().mockResolvedValue({
+              data: [
+                { ...mockIngredients[0], current_stock: 0, low_stock_threshold: 0 },
+              ],
+              error: null,
+            }),
+          }),
+          insert: vi.fn().mockResolvedValue({ error: null }),
+          update: vi.fn().mockReturnValue({ eq: vi.fn().mockResolvedValue({ error: null }) }),
+          delete: vi.fn().mockReturnValue({ eq: vi.fn().mockResolvedValue({ error: null }) }),
+        } as any
+      }
+      return {} as any
+    })
+    renderIngredients()
+    await waitFor(() => screen.getByText('Cooking Oil'))
+    expect(screen.queryByText('Low Stock')).not.toBeInTheDocument()
+  })
 })

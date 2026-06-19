@@ -144,7 +144,12 @@ export default function Ingredients() {
                 style={{ animationDelay: `${i * 50}ms` }}
               >
                 <div>
-                  <p className="font-semibold text-brand-text">{ing.name}</p>
+                  <p className="font-semibold text-brand-text flex items-center gap-2">
+                    {ing.name}
+                    {ing.low_stock_threshold > 0 && ing.current_stock <= ing.low_stock_threshold && (
+                      <span className="text-xs font-bold text-brand-accent">Low Stock</span>
+                    )}
+                  </p>
                   <p className="text-xs text-gray-400 mt-0.5">
                     ₱{ing.purchase_price.toFixed(2)} / {ing.purchase_qty}{ing.purchase_unit}
                     {' · '}{(() => { try { return `₱${costPerUsageUnit(ing).toFixed(4)}` } catch { return 'N/A' } })()}/{ing.usage_unit}
