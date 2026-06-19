@@ -10,6 +10,7 @@ const NAV_CARDS: NavCard[] = [
   { label: 'Menu', description: 'Categories, items, and flavors', to: '/menu/categories' },
   { label: 'Ingredients', description: 'Purchase prices and units', to: '/inventory/ingredients' },
   { label: 'Costing Sheet', description: 'Cost, price, and margin per item', to: '/costing' },
+  { label: 'Inventory Log', description: 'Stock movement history', to: '/inventory/log' },
 ]
 
 export default function Dashboard() {
