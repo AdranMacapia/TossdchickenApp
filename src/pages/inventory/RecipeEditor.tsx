@@ -111,7 +111,7 @@ export default function RecipeEditor() {
               <ul className="space-y-2 mb-4">
                 {recipes.map((recipe, i) => {
                   const ing = ingredientMap.get(recipe.ingredient_id)
-                  const lineCost = ing ? costPerUsageUnit(ing) * recipe.qty_used : 0
+                  const lineCost = ing ? (() => { try { return costPerUsageUnit(ing) * recipe.qty_used } catch { return 0 } })() : 0
                   return (
                     <li
                       key={recipe.id}
