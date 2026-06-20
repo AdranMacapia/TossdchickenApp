@@ -6,51 +6,58 @@
 
 ## Project Status
 
-**Phase:** Phase 2 COMPLETE — Phase 3 ready
-**Last updated:** 2026-06-18
-**Last session:** Phase 2 fully implemented via subagent-driven development. All 9 tasks done, 32 tests passing, PR open.
-**Next action:** Merge PR #1, then start Phase 3 (Inventory Management).
+**Phase:** Phase 3 COMPLETE — Menu Management (6 of 6 tasks done). Merged master → main.
+**Last updated:** 2026-06-19
+**Last session:** Completed Task 5 code quality review (4 fixes applied), implemented Task 6 (Flavors), merged to main. 56/56 tests passing.
+**Next action:** Phase 3 UI Polish — run `minimalist-ui` + `react-view-transitions` skills for full visual redesign.
 
 ---
 
 ## What Was Done Last Session
 
-Phase 2 fully implemented via subagent-driven development (Tasks 2–10):
+Phase 3 Menu Management — COMPLETE:
 
-- **costing.ts** — `costPerUsageUnit()` + `calcUnitCost()` with unit conversion (TDD, 8 tests)
-- **CartContext** — cart state + order type defaulting to 'takeout' (TDD, 8 tests)
-- **NumericKeypad** — big-button qty input component (TDD, 5 tests)
-- **CategoryTabBar** — horizontal scrollable category filter (TDD, 3 tests)
-- **useMenuData** — fetches categories/items/flavors from Supabase in parallel
-- **FlavorPicker** — flavor selection modal with drizzle toggle + qty; drizzle resets when reverting to Original
-- **OrderScreen** — full POS: takeout/dine-in toggle, menu grid, cart drawer, Supabase order insert, packaging deduction on takeout
-- **Receipt** — thermal-paper style receipt with order type badge; proper Supabase error handling
-- **PrivateRoute** — updated to accept array of roles; owner can now access POS
-- **App.tsx** — CartProvider wrapping POS routes, Receipt route wired
-
-**Test result:** 32/32 tests passing across 6 files. Zero TypeScript errors.
-**PR:** https://github.com/AdranMacapia/TossdchickenApp/pull/1 (master → main)
-**GitHub CLI:** Now installed and authenticated as AdranMacapia.
+- **PR #1 merged** — master → main merged via `gh`
+- **Plan written** — `docs/superpowers/plans/2026-06-18-menu-management.md`
+- **Task 1 ✅** — `src/components/PriceTag.tsx` + tests (6/6). SHA: `992facf`
+- **Task 2 ✅** — `src/components/OwnerNav.tsx`. SHA after task 2 committed.
+- **Task 3 ✅** — `src/App.tsx` — added lazy routes for Categories, MenuItems, Flavors. SHA: `d9a19a4`
+- **Task 4 ✅** — `src/pages/menu/Categories.tsx` + tests (6/6 after fix). Fix: load error handling + delete protection test. SHA: `7db3c1d`
+- **Task 5 ✅ FIXED** — Code quality review applied 4 fixes (toggle rollback, items-fetch error, test strengthened, delete guard). SHA: `91f988e`.
+- **Task 6 ✅** — `src/pages/menu/Flavors.tsx` + tests (6/6). SHA: `79ca436`.
+- **Merged to main** — master → main merged locally. 56/56 tests passing.
 
 ---
 
 ## What To Do Next
 
-### Step 1: Run SQL migrations (if not done yet — Task 1 from Phase 2 plan)
+### Phase 3 UI Polish
 
-If you haven't run the SQL in Supabase yet, do it now (see `docs/superpowers/plans/2026-06-18-pos-order-screen.md` Task 1).
+Run `minimalist-ui` + `react-view-transitions` skills for full visual redesign.
+Brand: Yellow `#FFCC00`, Black `#1A1A1A`, Hot Pink `#FF2D55`, White bg.
+Goal: clean, minimalist, subtle animations.
 
-### Step 2: Smoke test the POS (Task 11 from Phase 2 plan)
+Pages to polish: Login, Categories, MenuItems, Flavors, OrderScreen, Receipt.
 
-Run `npm run dev` and test the full order flow end-to-end per the checklist in Task 11.
+### After UI Polish
 
-### Step 3: Merge PR #1
+Run `minimalist-ui` + `react-view-transitions` skills for full visual redesign.
+Brand: Yellow `#FFCC00`, Black `#1A1A1A`, Hot Pink `#FF2D55`, White bg.
+Goal: clean, minimalist, subtle animations.
 
-Go to https://github.com/AdranMacapia/TossdchickenApp/pull/1 and merge.
+---
 
-### Step 4: Start Phase 3 — Inventory Management
+## Brand Colors (locked)
 
-Run `superpowers:writing-plans` for Phase 3.
+| Token | Hex | Usage |
+|---|---|---|
+| `brand.primary` | `#FFCC00` | Yellow — buttons, active states, highlights |
+| `brand.accent` | `#FF2D55` | Hot pink — badges, CTAs, "CHICKEN" energy |
+| `brand.text` | `#1A1A1A` | Black — all text |
+| `brand.bg` | `#FFFFFF` | White — page background |
+
+> Buttons: yellow bg + black text. Never white text on yellow.
+> UI polish scheduled after Phase 3 using `minimalist-ui` + `react-view-transitions`.
 
 ---
 
@@ -77,8 +84,8 @@ Run `superpowers:writing-plans` for Phase 3.
 4. **Profit & Loss** — Sales − COGS = Gross Profit. Gross Profit − Opex = Net Profit. VAT off now, toggleable.
 5. **Inventory auto-deduction** — on every completed order, subtract recipe ingredient qty from `ingredients.current_stock`, write to `inventory_log`.
 6. **Roles** — `owner` full access. `cashier` POS + receipt only.
-7. **Drizzled or not** — all flavored items: if not drizzled, sauce in tub = +₱1 to COGS only. `is_drizzled boolean default true` on `order_items`.
-8. **Barkada Feast Box** — `max_flavors = 2`, flat ₱299, no flavor surcharge.
+7. **Drizzled or not** — applies to DIPPING SAUCES (Ranch/Cheddar), not chicken flavors. If drizzled on food vs in cup = +₱1 COGS. `is_drizzled boolean default true` on `order_items`.
+8. **Barkada Feast Box** — `max_flavors = 4` (2 chicken flavors + 2 dipping sauces), flat ₱299, no flavor surcharge. Jack Daniel's = +₱20 surcharge.
 9. **Flavor tiers** — Original = base price, any other flavor = +₱10, Jack Daniel's = +₱20.
 10. **CMS-driven** — all menu changes via owner's Menu Management screens → instant POS update. No hardcoded menu.
 
@@ -109,7 +116,7 @@ Run `superpowers:writing-plans` for Phase 3.
 
 **Extras:** Rice ₱15, Add Flavor ₱15, Dipping Sauce ₱15, Cajun Fries ₱59
 
-**Drinks:** Bottled Water ₱15, Coke ₱15
+**Drinks:** Bottled Water ₱15, Soft Drinks ₱15 (Coke/Royal/Sprite)
 
 **Flavors:** Original, Honey Garlic, Salted Egg, Buffalo, Sweet Chili, Garlic Parmesan, Cheesy Jalapeño (+₱10), Jack Daniel's (+₱20)
 
@@ -128,30 +135,48 @@ TossdchickenApp/
 ├── CLAUDE.md
 ├── HANDOFF.md
 ├── docs/superpowers/plans/
-│   └── 2026-06-18-scaffold-auth.md   ← Phase 1 implementation plan (done)
+│   ├── 2026-06-18-scaffold-auth.md   ← Phase 1 plan (done)
+│   └── 2026-06-18-menu-management.md ← Phase 3 plan (in progress)
 ├── index.html
 ├── package.json
 ├── tailwind.config.ts
 ├── vite.config.ts                    ← PWA + Vitest (env.NODE_ENV=test fix)
 ├── src/
-│   ├── App.tsx                       ← router + AuthProvider + lazy routes
+│   ├── App.tsx                       ← router + AuthProvider + all lazy routes
 │   ├── main.tsx
 │   ├── index.css                     ← Tailwind directives only
 │   ├── test/setup.ts                 ← jest-dom import
 │   ├── lib/
-│   │   └── supabase.ts               ← Supabase client singleton
+│   │   ├── supabase.ts               ← Supabase client singleton
+│   │   └── costing.ts                ← calcUnitCost, costPerUsageUnit (done)
 │   ├── context/
-│   │   └── AuthContext.tsx           ← session, role, signIn, signOut
+│   │   ├── AuthContext.tsx           ← session, role, signIn, signOut
+│   │   └── CartContext.tsx           ← cart state for POS
+│   ├── hooks/
+│   │   └── useMenuData.ts            ← loads categories/items/flavors (available only)
 │   ├── components/
-│   │   └── PrivateRoute.tsx          ← role-based route guard
+│   │   ├── PrivateRoute.tsx          ← role-based route guard
+│   │   ├── CategoryTabBar.tsx        ← horizontal scrollable category tabs
+│   │   ├── NumericKeypad.tsx         ← big-button qty input
+│   │   ├── FlavorPicker.tsx          ← flavor selection modal
+│   │   ├── PriceTag.tsx              ← ₱ formatted price + margin warning ✅ Phase 3
+│   │   └── OwnerNav.tsx              ← owner page top bar ✅ Phase 3
 │   └── pages/
 │       ├── auth/
 │       │   ├── Login.tsx
 │       │   └── Register.tsx
 │       ├── pos/
-│       │   └── OrderScreen.tsx       ← STUB (Phase 2 replaces this)
-│       └── reports/
-│           └── Dashboard.tsx         ← STUB (Phase 6 replaces this)
+│       │   ├── OrderScreen.tsx       ← full POS (Phase 2 done)
+│       │   └── Receipt.tsx           ← receipt view (Phase 2 done)
+│       ├── reports/
+│       │   └── Dashboard.tsx         ← STUB (Phase 6)
+│       └── menu/
+│           ├── Categories.tsx        ← CRUD ✅ Phase 3
+│           ├── Categories.test.tsx
+│           ├── MenuItems.tsx         ← CRUD + availability toggle ✅ Phase 3
+│           ├── MenuItems.test.tsx
+│           ├── Flavors.tsx           ← ⏳ Task 6 NOT YET DONE
+│           └── Flavors.test.tsx      ← ⏳ Task 6 NOT YET DONE
 ```
 
 ---

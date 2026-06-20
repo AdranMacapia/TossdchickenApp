@@ -9,6 +9,12 @@ const Register = lazy(() => import('./pages/auth/Register'))
 const Dashboard = lazy(() => import('./pages/reports/Dashboard'))
 const OrderScreen = lazy(() => import('./pages/pos/OrderScreen'))
 const Receipt = lazy(() => import('./pages/pos/Receipt'))
+const Categories = lazy(() => import('./pages/menu/Categories'))
+const MenuItems = lazy(() => import('./pages/menu/MenuItems'))
+const Flavors = lazy(() => import('./pages/menu/Flavors'))
+const Ingredients = lazy(() => import('./pages/menu/Ingredients'))
+const RecipeEditor = lazy(() => import('./pages/inventory/RecipeEditor'))
+const CostingSheet = lazy(() => import('./pages/costing/CostingSheet'))
 
 export default function App() {
   return (
@@ -26,6 +32,54 @@ export default function App() {
               element={
                 <PrivateRoute role="owner">
                   <Dashboard />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/menu/categories"
+              element={
+                <PrivateRoute role="owner">
+                  <Categories />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/menu/items"
+              element={
+                <PrivateRoute role="owner">
+                  <MenuItems />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/menu/items/:itemId/flavors"
+              element={
+                <PrivateRoute role="owner">
+                  <Flavors />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/inventory/ingredients"
+              element={
+                <PrivateRoute role="owner">
+                  <Ingredients />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/inventory/recipes/:itemId"
+              element={
+                <PrivateRoute role="owner">
+                  <RecipeEditor />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/costing"
+              element={
+                <PrivateRoute role="owner">
+                  <CostingSheet />
                 </PrivateRoute>
               }
             />

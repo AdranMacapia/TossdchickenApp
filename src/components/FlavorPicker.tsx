@@ -22,7 +22,8 @@ export function FlavorPicker({ item, flavors, onConfirm, onClose }: FlavorPicker
   const [qty, setQty] = useState(1)
 
   const itemFlavors = flavors.filter(f => f.menu_item_id === item.id)
-  const hasNonOriginal = selectedFlavors.some(f => f.name !== 'Original')
+  const DIPPING_SAUCES = new Set(['Ranch', 'Cheddar'])
+  const hasDippingSauce = selectedFlavors.some(f => DIPPING_SAUCES.has(f.name))
   const unitPrice = item.base_price + selectedFlavors.reduce((sum, f) => sum + f.surcharge, 0)
   const isConfirmDisabled = itemFlavors.length > 0 && selectedFlavors.length === 0
 
@@ -40,7 +41,7 @@ export function FlavorPicker({ item, flavors, onConfirm, onClose }: FlavorPicker
       }
     }
     setSelectedFlavors(nextFlavors)
-    if (!nextFlavors.some(f => f.name !== 'Original')) {
+    if (!nextFlavors.some(f => DIPPING_SAUCES.has(f.name))) {
       setIsDrizzled(true)
     }
   }
@@ -89,11 +90,11 @@ export function FlavorPicker({ item, flavors, onConfirm, onClose }: FlavorPicker
           </div>
         )}
 
-        {hasNonOriginal && (
+        {hasDippingSauce && (
           <div className="flex items-center justify-between mb-4 p-3 bg-amber-50 rounded-card">
             <div>
-              <p className="text-sm font-medium text-brand-text">Drizzled?</p>
-              <p className="text-xs text-gray-500">No = sauce in tub (+₱1 cost only)</p>
+              <p className="text-sm font-medium text-brand-text">Drizzled on food?</p>
+              <p className="text-xs text-gray-500">No = sauce in cup (+₱1 cost only)</p>
             </div>
             <button
               onClick={() => setIsDrizzled(prev => !prev)}
